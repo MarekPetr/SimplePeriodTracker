@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "Period Tracker"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "gender": "I am",
+    "woman": "Woman",
+    "man": "Man",
+    "logout": "Log Out",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "loginError": "Invalid email or password",
+    "registerError": "Registration failed. Please try again.",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordsDontMatch": "Passwords don't match",
+    "genderRequired": "Please select your gender"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "monthView": "Month View",
+    "listView": "List View",
+    "today": "Today",
+    "period": "Period",
+    "ovulation": "Ovulation",
+    "fertile": "Fertile Window",
+    "predicted": "Predicted",
+    "addNote": "Add Note"
+  },
+  "notes": {
+    "title": "Notes",
+    "addNote": "Add Note",
+    "editNote": "Edit Note",
+    "deleteNote": "Delete Note",
+    "placeholder": "Write your note here...",
+    "quickEmojis": "Quick Add",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "dayDetail": {
+    "title": "Day Details",
+    "type": "Type",
+    "note": "Note",
+    "noNote": "No notes for this day"
+  },
+  "settings": {
+    "title": "Settings",
+    "sharing": "Sharing Settings",
+    "sharePeriods": "Share periods with partner",
+    "shareOvulation": "Share ovulation with partner",
+    "shareNotes": "Share notes with partner",
+    "partner": "Partner",
+    "partnerCode": "Partner Code",
+    "connectPartner": "Connect with Partner",
+    "disconnectPartner": "Disconnect Partner",
+    "language": "Language",
+    "english": "English",
+    "czech": "Czech"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "monday": "Mo",
+    "tuesday": "Tu",
+    "wednesday": "We",
+    "thursday": "Th",
+    "friday": "Fr",
+    "saturday": "Sa",
+    "sunday": "Su"
+  }
+}
