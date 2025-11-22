@@ -106,7 +106,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               {t('auth.password')}
             </Text>
             <TextInput
-              className={`border rounded-lg px-4 py-3 text-base ${
+              className={`border rounded-lg px-4 py-3 text-base text-gray-900 ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder={t('auth.password')}
