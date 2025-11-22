@@ -3,8 +3,8 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 const API_URL = __DEV__
-    ? 'http://192.168.88.250:8000'
-  : 'https://your-production-api.vercel.app' // Production URL
+  ? process.env.EXPO_PUBLIC_API_URL_DEV
+  : process.env.EXPO_PUBLIC_API_URL_PROD;
 
 const TOKEN_KEY = 'auth_token';
 
