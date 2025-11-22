@@ -13,11 +13,12 @@ export const authApi = {
   },
 
   async login(email: string, password: string): Promise<AuthResponse> {
-    const formData = new FormData();
-    formData.append('username', email); // Backend expects username field
-    formData.append('password', password);
+    // Create URL-encoded form data for OAuth2 password grant
+    const params = new URLSearchParams();
+    params.append('username', email);
+    params.append('password', password);
 
-    const response = await apiClient.post<AuthResponse>('/auth/login', formData, {
+    const response = await apiClient.client.post<AuthResponse>('/auth/login', params.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
