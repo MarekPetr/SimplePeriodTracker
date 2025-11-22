@@ -6,10 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DayInfo } from '@/types/cycle';
 import { Note, QUICK_ACCESS_EMOJIS } from '@/types/note';
 import { noteApi } from '@/api/note';
@@ -135,11 +133,8 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
       transparent={true}
       onRequestClose={onClose}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1 justify-end bg-black/50"
-      >
-        <View className="bg-white rounded-t-3xl max-h-[85%]">
+      <View className="flex-1 justify-end bg-black/50">
+        <View className="bg-white rounded-t-3xl">
           {/* Header */}
           <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
             <Text className="text-xl font-bold text-gray-900">
@@ -154,7 +149,14 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
             </TouchableOpacity>
           </View>
 
-          <ScrollView className="px-6 py-4" keyboardShouldPersistTaps="handled">
+          <KeyboardAwareScrollView
+            className="px-6 py-4"
+            enableOnAndroid={true}
+            enableAutomaticScroll={true}
+            extraScrollHeight={260}
+            viewIsInsideTabBar={false}
+            keyboardShouldPersistTaps="handled"
+          >
             {isLoading ? (
               <ActivityIndicator size="large" color="#ec4899" />
             ) : (
@@ -235,9 +237,9 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                 </View>
               </>
             )}
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };
