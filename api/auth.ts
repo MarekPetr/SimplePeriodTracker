@@ -3,7 +3,7 @@ import { AuthResponse, User } from '@/types/auth';
 
 export const authApi = {
   async register(email: string, password: string, gender: 'woman' | 'man'): Promise<User> {
-    const response = await apiClient.client.post<User>('/auth/register', {
+    const response = await apiClient.axios.post<User>('/auth/register', {
       email,
       password,
       gender,
@@ -17,7 +17,7 @@ export const authApi = {
     params.append('username', email);
     params.append('password', password);
 
-    const response = await apiClient.client.post<AuthResponse>('/auth/login', params.toString(), {
+    const response = await apiClient.axios.post<AuthResponse>('/auth/login', params.toString(), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -32,7 +32,7 @@ export const authApi = {
   },
 
   async getMe(): Promise<User> {
-    const response = await apiClient.client.get<User>('/auth/me');
+    const response = await apiClient.axios.get<User>('/auth/me');
     return response.data;
   },
 
@@ -41,7 +41,7 @@ export const authApi = {
     share_ovulation?: boolean;
     share_notes?: boolean;
   }): Promise<void> {
-    await apiClient.client.put('/auth/sharing-settings', settings);
+    await apiClient.axios.put('/auth/sharing-settings', settings);
   },
 
   async logout(): Promise<void> {

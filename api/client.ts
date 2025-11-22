@@ -9,10 +9,10 @@ const API_URL = __DEV__
 const TOKEN_KEY = 'auth_token';
 
 class ApiClient {
-  public client: AxiosInstance;
+  public axios: AxiosInstance;
 
   constructor() {
-    this.client = axios.create({
+    this.axios = axios.create({
       baseURL: API_URL,
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ class ApiClient {
 
   private setupInterceptors() {
     // Request interceptor to add token
-    this.client.interceptors.request.use(
+    this.axios.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
         const token = await this.getToken();
         if (token && config.headers) {
@@ -38,7 +38,7 @@ class ApiClient {
     );
 
     // Response interceptor for error handling
-    this.client.interceptors.response.use(
+    this.axios.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
