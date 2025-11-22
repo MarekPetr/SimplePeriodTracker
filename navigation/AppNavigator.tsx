@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useAuth } from '../context/AuthContext';
-import { LoginScreen } from '../screens/auth/LoginScreen';
-import { RegisterScreen } from '../screens/auth/RegisterScreen';
-import { HomeScreen } from '../screens/main/HomeScreen';
+import { useAuth } from '@/context/AuthContext';
+import { LoginScreen } from '@/screens/auth/LoginScreen';
+import { RegisterScreen } from '@/screens/auth/RegisterScreen';
+import { HomeScreen } from '@/screens/main/HomeScreen';
 import { ActivityIndicator, View } from 'react-native';
 
 export type RootStackParamList = {

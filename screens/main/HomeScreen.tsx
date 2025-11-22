@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
-import { useI18n } from '../../i18n/provider';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useAuth } from '@/context/AuthContext';
+import { useI18n } from '@/i18n/provider';
+import { CalendarView } from '@/components/CalendarView';
 
 export const HomeScreen: React.FC = () => {
   const { user, logout } = useAuth();
@@ -16,27 +17,26 @@ export const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View className="flex-1 bg-white justify-center items-center px-6">
-      <Text className="text-3xl font-bold text-pink-600 mb-4">
-        {t('app.name')}
-      </Text>
-      <Text className="text-lg text-gray-700 mb-2">
-        Welcome, {user?.email}!
-      </Text>
-      <Text className="text-base text-gray-600 mb-8">
-        Gender: {user?.gender === 'woman' ? t('auth.woman') : t('auth.man')}
-      </Text>
+    <View className="flex-1 bg-white">
+      {/* Header */}
+      <View className="pt-12 pb-4 px-6 bg-pink-600">
+        <View className="flex-row justify-between items-center">
+          <View>
+            <Text className="text-2xl font-bold text-white">{t('app.name')}</Text>
+            <Text className="text-white text-sm mt-1">{user?.email}</Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleLogout}
+            className="bg-white/20 rounded-lg px-4 py-2"
+          >
+            <Text className="text-white font-semibold">{t('auth.logout')}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      <Text className="text-gray-500 text-center mb-8">
-        Calendar view coming soon...
-      </Text>
-
-      <TouchableOpacity
-        className="bg-red-500 rounded-lg py-3 px-8"
-        onPress={handleLogout}
-      >
-        <Text className="text-white font-semibold">{t('auth.logout')}</Text>
-      </TouchableOpacity>
+      <ScrollView>
+        <CalendarView />
+      </ScrollView>
     </View>
   );
 };
