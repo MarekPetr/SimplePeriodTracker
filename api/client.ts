@@ -3,15 +3,13 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 const API_URL = __DEV__
-  ? Platform.OS === 'android'
-    ? 'http://10.0.2.2:8000' // Android emulator
-    : 'http://localhost:8000' // iOS simulator or web
-  : 'https://your-production-api.vercel.app'; // Production URL
+    ? 'http://192.168.88.250:8000'
+  : 'https://your-production-api.vercel.app' // Production URL
 
 const TOKEN_KEY = 'auth_token';
 
 class ApiClient {
-  private client: AxiosInstance;
+  public client: AxiosInstance;
 
   constructor() {
     this.client = axios.create({
@@ -88,11 +86,6 @@ class ApiClient {
       console.error('Error clearing token:', error);
     }
   }
-
-  getClient(): AxiosInstance {
-    return this.client;
-  }
 }
 
 export const apiClient = new ApiClient();
-export default apiClient.getClient();
