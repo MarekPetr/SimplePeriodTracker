@@ -10,7 +10,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DayInfo } from '@/types/cycle';
 import { Note, QUICK_ACCESS_EMOJIS } from '@/types/note';
-import { noteApi } from '@/api/note';
+import { notesApi } from '@/api/notes';
 import { useI18n } from '@/i18n/provider';
 
 interface DayDetailModalProps {
@@ -44,7 +44,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const loadNote = async () => {
     try {
       setIsLoading(true);
-      const noteData = await noteApi.getNoteByDate(date);
+      const noteData = await notesApi.getNoteByDate(date);
       setNote(noteData);
       setNoteText(noteData?.content || '');
       setSelectedEmojis(noteData?.emojis || []);
@@ -66,12 +66,12 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
       };
 
       if (note) {
-        await noteApi.updateNote(date, {
+        await notesApi.updateNote(date, {
           content: noteText,
           emojis: selectedEmojis,
         });
       } else {
-        await noteApi.createNote(noteData);
+        await notesApi.createNote(noteData);
       }
 
       onNoteUpdated?.();
@@ -86,7 +86,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const handleDeleteNote = async () => {
     try {
       setIsSaving(true);
-      await noteApi.deleteNote(date);
+      await notesApi.deleteNote(date);
       onNoteUpdated?.();
       onClose();
     } catch (error) {

@@ -1,7 +1,7 @@
 import { apiClient } from '@/api/client';
 import { Note, CreateNoteRequest, UpdateNoteRequest } from '@/types/note';
 
-export const noteApi = {
+export const notesApi = {
   async getNoteByDate(date: string): Promise<Note | null> {
     try {
       const response = await apiClient.axios.get<Note>(`/notes/${date}`);
