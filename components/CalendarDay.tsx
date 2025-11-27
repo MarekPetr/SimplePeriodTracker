@@ -4,7 +4,7 @@ import { DayInfo } from '@/types/cycle';
 
 interface CalendarDayProps {
   date?: { dateString: string; day: number; month: number; year: number };
-  state?: 'disabled' | 'today' | '';
+  state?: string;
   marking?: any;
   dayInfo?: DayInfo;
   onPress?: () => void;
