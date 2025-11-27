@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { calendarApi } from '@/api/calendar';
 import { cyclesApi } from '@/api/cycles';
@@ -67,7 +67,6 @@ export const CalendarView: React.FC = () => {
 
     // Only allow today or past dates
     if (selectedDate > today) {
-      Alert.alert('Invalid Date', 'You can only log periods for today or past dates.');
       return;
     }
 
@@ -78,28 +77,24 @@ export const CalendarView: React.FC = () => {
           start_date: dateString,
           end_date: dateString,
         });
-        Alert.alert('Success', 'Period logged for today!');
         setLoggingMode(null);
         loadMonthData(currentMonth.year, currentMonth.month);
       } catch (error) {
         console.error('Error logging period:', error);
-        Alert.alert('Error', 'Failed to log period. Please try again.');
       }
       return;
     }
 
     // For past dates: two-step process (start then end)
     if (!periodStartDate) {
-      // First click: set start date
+      // First click: set start date (shown with lighter red)
       setPeriodStartDate(dateString);
-      Alert.alert('Period Start Selected', `Start: ${dateString}\n\nNow select the end date.`);
     } else {
       // Second click: set end date and create period
       const startDate = new Date(periodStartDate);
       startDate.setHours(0, 0, 0, 0);
 
       if (selectedDate < startDate) {
-        Alert.alert('Invalid Date', 'End date must be after or equal to start date.');
         return;
       }
 
@@ -108,13 +103,11 @@ export const CalendarView: React.FC = () => {
           start_date: periodStartDate,
           end_date: dateString,
         });
-        Alert.alert('Success', `Period logged from ${periodStartDate} to ${dateString}!`);
         setPeriodStartDate(null);
         setLoggingMode(null);
         loadMonthData(currentMonth.year, currentMonth.month);
       } catch (error) {
         console.error('Error logging period:', error);
-        Alert.alert('Error', 'Failed to log period. Please try again.');
       }
     }
   };
@@ -160,6 +153,7 @@ export const CalendarView: React.FC = () => {
             state={state}
             dayInfo={date ? monthData[date.dateString] : undefined}
             onPress={() => date && handleDayPress(date)}
+            isLoggingPeriodStart={loggingMode === 'period' && date?.dateString === periodStartDate}
           />
         )}
         theme={{

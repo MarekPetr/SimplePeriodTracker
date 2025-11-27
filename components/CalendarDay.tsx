@@ -8,6 +8,7 @@ interface CalendarDayProps {
   marking?: any;
   dayInfo?: DayInfo;
   onPress?: () => void;
+  isLoggingPeriodStart?: boolean;
 }
 
 export const CalendarDay: React.FC<CalendarDayProps> = ({
@@ -15,6 +16,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
   state,
   dayInfo,
   onPress,
+  isLoggingPeriodStart,
 }) => {
   if (!date) {
     return <View className="w-10 h-10" />;
@@ -27,7 +29,11 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
   let bgColor = 'bg-transparent';
   let textColor = 'text-gray-900';
 
-  if (dayInfo?.type === 'period') {
+  // Show lighter red for period start selection
+  if (isLoggingPeriodStart) {
+    bgColor = 'bg-red-300';
+    textColor = 'text-gray-900';
+  } else if (dayInfo?.type === 'period') {
     bgColor = 'bg-red-500';
     textColor = 'text-white';
   } else if (dayInfo?.type === 'ovulation') {
