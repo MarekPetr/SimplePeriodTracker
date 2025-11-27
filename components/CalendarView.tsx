@@ -7,7 +7,7 @@ import { DayInfo } from '@/types/cycle';
 import { DayDetailModal } from '@/components/DayDetailModal';
 import { CalendarDay } from '@/components/CalendarDay';
 
-type LoggingMode = 'period' | 'edit' | null;
+type LoggingMode = 'add-period' | 'edit-period' | null;
 
 export const CalendarView: React.FC = () => {
   const [monthData, setMonthData] = useState<Record<string, DayInfo>>({});
@@ -49,13 +49,13 @@ export const CalendarView: React.FC = () => {
 
   const handleDayPress = (date: DateData) => {
     // If in logging mode, handle period logging
-    if (loggingMode === 'period') {
+    if (loggingMode === 'add-period') {
       handlePeriodLogging(date.dateString);
       return;
     }
 
     // If in edit mode, handle period editing
-    if (loggingMode === 'edit') {
+    if (loggingMode === 'edit-period') {
       handlePeriodEditing(date.dateString);
       return;
     }
@@ -120,57 +120,60 @@ export const CalendarView: React.FC = () => {
 
   const handlePeriodEditing = async (dateString: string) => {
     const clickedDate = new Date(dateString);
-    clickedDate.setHours(0, 0, 0, 0);
 
     try {
       // Fetch all periods to find which one contains this date
       const periods = await cyclesApi.getCycles();
-
       // Find the period that contains this date
       const period = periods.find((p) => {
-        const startDate = new Date(p.start_date);
-        const endDate = p.end_date ? new Date(p.end_date) : startDate;
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(0, 0, 0, 0);
+        // Extract just the date part (YYYY-MM-DD) from datetime strings
+        const startDateStr = p.start_date.split('T')[0];
+        const endDateStr = p.end_date ? p.end_date.split('T')[0] : startDateStr;
+
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
 
         return clickedDate >= startDate && clickedDate <= endDate;
       });
 
       if (!period) {
         // No period found for this date
+        console.log('No period found for this date');
         return;
       }
 
-      const startDate = new Date(period.start_date);
-      const endDate = period.end_date ? new Date(period.end_date) : startDate;
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(0, 0, 0, 0);
+      // Extract just the date part from datetime strings
+      const startDateStr = period.start_date.split('T')[0];
+      const endDateStr = period.end_date ? period.end_date.split('T')[0] : startDateStr;
+
+      const startDate = new Date(startDateStr);
+      const endDate = new Date(endDateStr);
 
       const isFirstDay = clickedDate.getTime() === startDate.getTime();
       const isLastDay = clickedDate.getTime() === endDate.getTime();
       const isSingleDay = startDate.getTime() === endDate.getTime();
 
       if (isSingleDay) {
-        // Delete the entire period
         await cyclesApi.deleteCycle(period.id);
       } else if (isFirstDay) {
-        // Remove first day: update start_date to next day
         const newStartDate = new Date(startDate);
         newStartDate.setDate(newStartDate.getDate() + 1);
+        const newStartDateStr = newStartDate.toISOString().split('T')[0];
         await cyclesApi.updateCycle(period.id, {
-          start_date: newStartDate.toISOString().split('T')[0],
-          end_date: period.end_date!,
+          start_date: newStartDateStr,
+          end_date: endDateStr,
         });
       } else if (isLastDay) {
-        // Remove last day: update end_date to previous day
         const newEndDate = new Date(endDate);
         newEndDate.setDate(newEndDate.getDate() - 1);
+        const newEndDateStr = newEndDate.toISOString().split('T')[0];
+
         await cyclesApi.updateCycle(period.id, {
-          start_date: period.start_date,
-          end_date: newEndDate.toISOString().split('T')[0],
+          start_date: startDateStr,
+          end_date: newEndDateStr,
         });
       } else {
-        // Middle day: delete entire period
+        console.log('Deleting entire period (middle day clicked)');
         await cyclesApi.deleteCycle(period.id);
       }
 
@@ -182,24 +185,24 @@ export const CalendarView: React.FC = () => {
   };
 
   const handleTogglePeriodLogging = () => {
-    if (loggingMode === 'period') {
+    if (loggingMode === 'add-period') {
       // Cancel logging mode
       setLoggingMode(null);
       setPeriodStartDate(null);
     } else {
       // Enter period logging mode
-      setLoggingMode('period');
+      setLoggingMode('add-period');
       setPeriodStartDate(null);
     }
   };
 
   const handleTogglePeriodEditing = () => {
-    if (loggingMode === 'edit') {
+    if (loggingMode === 'edit-period') {
       // Cancel edit mode
       setLoggingMode(null);
     } else {
       // Enter edit mode
-      setLoggingMode('edit');
+      setLoggingMode('edit-period');
       setPeriodStartDate(null);
     }
   };
@@ -233,7 +236,7 @@ export const CalendarView: React.FC = () => {
             state={state}
             dayInfo={date ? monthData[date.dateString] : undefined}
             onPress={() => date && handleDayPress(date)}
-            isLoggingPeriodStart={loggingMode === 'period' && date?.dateString === periodStartDate}
+            isLoggingPeriodStart={loggingMode === 'add-period' && date?.dateString === periodStartDate}
           />
         )}
         theme={{
@@ -250,29 +253,29 @@ export const CalendarView: React.FC = () => {
           <TouchableOpacity
             onPress={handleTogglePeriodLogging}
             className={`flex-1 py-3 px-6 rounded-lg ${
-              loggingMode === 'period' ? 'bg-red-600' : 'bg-red-500'
+              loggingMode === 'add-period' ? 'bg-red-600' : 'bg-red-500'
             }`}
             activeOpacity={0.8}
           >
             <Text className="text-white text-center font-semibold text-base">
-              {loggingMode === 'period' ? 'Cancel' : 'Log Period'}
+              {loggingMode === 'add-period' ? 'Cancel' : 'Add Period'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleTogglePeriodEditing}
             className={`flex-1 py-3 px-6 rounded-lg ${
-              loggingMode === 'edit' ? 'bg-orange-600' : 'bg-orange-500'
+              loggingMode === 'edit-period' ? 'bg-orange-600' : 'bg-orange-500'
             }`}
             activeOpacity={0.8}
           >
             <Text className="text-white text-center font-semibold text-base">
-              {loggingMode === 'edit' ? 'Cancel' : 'Edit Period'}
+              {loggingMode === 'edit-period' ? 'Cancel' : 'Edit Period'}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {loggingMode === 'period' && (
+        {loggingMode === 'add-period' && (
           <View className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
             <Text className="text-red-800 text-sm text-center">
               {periodStartDate
@@ -282,7 +285,7 @@ export const CalendarView: React.FC = () => {
           </View>
         )}
 
-        {loggingMode === 'edit' && (
+        {loggingMode === 'edit-period' && (
           <View className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
             <Text className="text-orange-800 text-sm text-center">
               Tap a period day to edit:{'\n'}
