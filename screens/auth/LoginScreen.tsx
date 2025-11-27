@@ -68,7 +68,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
       >
         <View className="mb-12">
-          <Text className="text-4xl font-bold text-center text-pink-600 mb-2">
+          <Text className="text-4xl font-bold text-center text-red-600 mb-2">
             {t('app.name')}
           </Text>
           <Text className="text-lg text-center text-gray-600">
@@ -126,7 +126,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           </View>
 
           <TouchableOpacity
-            className={`bg-pink-600 rounded-lg py-4 mt-4 ${
+            className={`bg-red-600 rounded-lg py-4 mt-4 ${
               isLoading ? 'opacity-50' : ''
             }`}
             onPress={handleLogin}
@@ -148,7 +148,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             onPress={() => navigation.navigate('Register')}
             disabled={isLoading}
           >
-            <Text className="text-pink-600 font-semibold">
+            <Text className="text-red-600 font-semibold">
               {t('auth.register')}
             </Text>
           </TouchableOpacity>

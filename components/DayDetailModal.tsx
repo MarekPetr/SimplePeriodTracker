@@ -185,7 +185,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                       onPress={() => toggleEmoji(emoji)}
                       className={`p-3 rounded-lg border-2 ${
                         selectedEmojis.includes(emoji)
-                          ? 'border-pink-500 bg-pink-50'
+                          ? 'border-red-500 bg-red-50'
                           : 'border-gray-300 bg-white'
                       }`}
                     >
@@ -213,7 +213,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                   <TouchableOpacity
                     onPress={handleSaveNote}
                     disabled={isSaving}
-                    className={`flex-1 bg-pink-600 rounded-lg py-4 ${
+                    className={`flex-1 bg-red-600 rounded-lg py-4 ${
                       isSaving ? 'opacity-50' : ''
                     }`}
                   >

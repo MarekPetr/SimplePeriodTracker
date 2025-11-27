@@ -183,7 +183,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
               <TouchableOpacity
                 className={`flex-1 border-2 rounded-lg py-4 ${
                   gender === 'woman'
-                    ? 'border-pink-600 bg-pink-50'
+                    ? 'border-red-600 bg-red-50'
                     : 'border-gray-300'
                 }`}
                 onPress={() => {
@@ -194,7 +194,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
               >
                 <Text
                   className={`text-center font-semibold ${
-                    gender === 'woman' ? 'text-pink-600' : 'text-gray-600'
+                    gender === 'woman' ? 'text-red-600' : 'text-gray-600'
                   }`}
                 >
                   {t('auth.woman')}
@@ -228,7 +228,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
           </View>
 
           <TouchableOpacity
-            className={`bg-pink-600 rounded-lg py-4 mt-4 ${
+            className={`bg-red-600 rounded-lg py-4 mt-4 ${
               isLoading ? 'opacity-50' : ''
             }`}
             onPress={handleRegister}
@@ -250,7 +250,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
             onPress={() => navigation.navigate('Login')}
             disabled={isLoading}
           >
-            <Text className="text-pink-600 font-semibold">{t('auth.login')}</Text>
+            <Text className="text-red-600 font-semibold">{t('auth.login')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
