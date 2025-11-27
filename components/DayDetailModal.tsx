@@ -221,7 +221,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                       <ActivityIndicator color="white" />
                     ) : (
                       <Text className="text-white text-center font-semibold">
-                        { t('notes.save')}
+                        { t('common.save')}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -235,7 +235,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                       }`}
                     >
                       <Text className="text-white text-center font-semibold">
-                        { t('notes.delete')}
+                        { t('common.delete')}
                       </Text>
                     </TouchableOpacity>
                   )}
