@@ -259,7 +259,7 @@ export const CalendarView: React.FC = () => {
             <Text className="text-sm text-gray-600">{ t('calendar.fertile') }</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="w-3 h-3 bg-amber-700 rounded-full mr-2" />
+            <View className="w-3 h-3 bg-gray-600 rounded-full mr-2" />
             <Text className="text-sm text-gray-600">{ t('calendar.hasNote') }</Text>
           </View>
         </View>
@@ -281,19 +281,19 @@ export const CalendarView: React.FC = () => {
             activeOpacity={0.8}
           >
             <Text className="text-white text-center font-semibold text-base">
-              {editMode === 'add-period' ? 'Cancel' : t('calendar.addPeriod')}
+              {editMode === 'add-period' ? t('common.cancel') : t('calendar.addPeriod')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleTogglePeriodEditing}
             className={`flex-1 py-3 px-6 rounded-lg ${
-              editMode === 'edit-period' ? 'bg-orange-600' : 'bg-orange-500'
+              editMode === 'edit-period' ? 'bg-orange-400' : 'bg-orange-400'
             }`}
             activeOpacity={0.8}
           >
             <Text className="text-white text-center font-semibold text-base">
-              {editMode === 'edit-period' ? 'Cancel' : t('calendar.removePeriod')}
+              {editMode === 'edit-period' ? t('common.cancel') : t('calendar.removePeriod')}
             </Text>
           </TouchableOpacity>
         </View>

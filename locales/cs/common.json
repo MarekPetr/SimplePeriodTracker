@@ -51,7 +51,8 @@
     "title": "Detail dne",
     "type": "Typ",
     "note": "Poznámka",
-    "noNote": "Pro tento den nejsou žádné poznámky"
+    "noNote": "Pro tento den nejsou žádné poznámky",
+    "emojiNote": "Rychlá emoji poznámka:"
   },
   "settings": {
     "title": "Nastavení",

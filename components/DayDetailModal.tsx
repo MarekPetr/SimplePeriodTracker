@@ -176,7 +176,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
 
                 {/* Quick Emoji Selection */}
                 <Text className="text-sm font-semibold text-gray-700 mb-2">
-                  Quick Emoji Notes:
+                  { t('dayDetail.emojiNote')}
                 </Text>
                 <View className="flex-row flex-wrap gap-2 mb-4">
                   {QUICK_ACCESS_EMOJIS.map((emoji) => (
@@ -196,7 +196,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
 
                 {/* Note Text Input */}
                 <Text className="text-sm font-semibold text-gray-700 mb-2">
-                  Note:
+                  { t('dayDetail.note')}
                 </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3 text-base text-gray-900 mb-4"
@@ -221,7 +221,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                       <ActivityIndicator color="white" />
                     ) : (
                       <Text className="text-white text-center font-semibold">
-                        Save Note
+                        { t('notes.save')}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -235,7 +235,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                       }`}
                     >
                       <Text className="text-white text-center font-semibold">
-                        Delete
+                        { t('notes.delete')}
                       </Text>
                     </TouchableOpacity>
                   )}

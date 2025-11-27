@@ -37,7 +37,7 @@
     "addPeriod": "Add",
     "removePeriod": "Remove"
   },
-  "notes": {
+  "notes": {    
     "title": "Notes",
     "addNote": "Add Note",
     "editNote": "Edit Note",
@@ -51,7 +51,8 @@
     "title": "Day Details",
     "type": "Type",
     "note": "Note",
-    "noNote": "No notes for this day"
+    "noNote": "No notes for this day",
+    "emojiNote": "Quick Emoji Notes:"
   },
   "settings": {
     "title": "Settings",

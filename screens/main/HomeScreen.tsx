@@ -19,7 +19,7 @@ export const HomeScreen: React.FC = () => {
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="pt-12 pb-4 px-6 bg-pink-600">
+      <View className="pt-12 pb-4 px-6 bg-red-600">
         <View className="flex-row justify-between items-center">
           <View>
             <Text className="text-2xl font-bold text-white">{t('app.name')}</Text>

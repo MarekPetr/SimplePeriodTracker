@@ -92,7 +92,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) =>
         keyboardShouldPersistTaps="handled"
       >
         <View className="mb-8">
-          <Text className="text-4xl font-bold text-center text-pink-600 mb-2">
+          <Text className="text-4xl font-bold text-center text-red-600 mb-2">
             {t('app.name')}
           </Text>
           <Text className="text-lg text-center text-gray-600">
