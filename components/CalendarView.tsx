@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { calendarApi } from '@/api/calendar';
 import { cyclesApi } from '@/api/cycles';
 import { DayInfo } from '@/types/cycle';
 import { DayDetailModal } from '@/components/DayDetailModal';
 import { CalendarDay } from '@/components/CalendarDay';
+
+type LoggingMode = 'period' | null;
 
 export const CalendarView: React.FC = () => {
   const [monthData, setMonthData] = useState<Record<string, DayInfo>>({});
@@ -16,6 +18,8 @@ export const CalendarView: React.FC = () => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() + 1 };
   });
+  const [loggingMode, setLoggingMode] = useState<LoggingMode>(null);
+  const [periodStartDate, setPeriodStartDate] = useState<string | null>(null);
 
   useEffect(() => {
     loadMonthData(currentMonth.year, currentMonth.month);
@@ -44,8 +48,87 @@ export const CalendarView: React.FC = () => {
   };
 
   const handleDayPress = (date: DateData) => {
+    // If in logging mode, handle period logging
+    if (loggingMode === 'period') {
+      handlePeriodLogging(date.dateString);
+      return;
+    }
+
+    // Normal mode: open note modal
     setSelectedDate(date.dateString);
     setIsModalVisible(true);
+  };
+
+  const handlePeriodLogging = async (dateString: string) => {
+    const selectedDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    // Only allow today or past dates
+    if (selectedDate > today) {
+      Alert.alert('Invalid Date', 'You can only log periods for today or past dates.');
+      return;
+    }
+
+    // If clicking today, create/extend period immediately
+    if (selectedDate.getTime() === today.getTime()) {
+      try {
+        await cyclesApi.createCycle({
+          start_date: dateString,
+          end_date: dateString,
+        });
+        Alert.alert('Success', 'Period logged for today!');
+        setLoggingMode(null);
+        loadMonthData(currentMonth.year, currentMonth.month);
+      } catch (error) {
+        console.error('Error logging period:', error);
+        Alert.alert('Error', 'Failed to log period. Please try again.');
+      }
+      return;
+    }
+
+    // For past dates: two-step process (start then end)
+    if (!periodStartDate) {
+      // First click: set start date
+      setPeriodStartDate(dateString);
+      Alert.alert('Period Start Selected', `Start: ${dateString}\n\nNow select the end date.`);
+    } else {
+      // Second click: set end date and create period
+      const startDate = new Date(periodStartDate);
+      startDate.setHours(0, 0, 0, 0);
+
+      if (selectedDate < startDate) {
+        Alert.alert('Invalid Date', 'End date must be after or equal to start date.');
+        return;
+      }
+
+      try {
+        await cyclesApi.createCycle({
+          start_date: periodStartDate,
+          end_date: dateString,
+        });
+        Alert.alert('Success', `Period logged from ${periodStartDate} to ${dateString}!`);
+        setPeriodStartDate(null);
+        setLoggingMode(null);
+        loadMonthData(currentMonth.year, currentMonth.month);
+      } catch (error) {
+        console.error('Error logging period:', error);
+        Alert.alert('Error', 'Failed to log period. Please try again.');
+      }
+    }
+  };
+
+  const handleTogglePeriodLogging = () => {
+    if (loggingMode === 'period') {
+      // Cancel logging mode
+      setLoggingMode(null);
+      setPeriodStartDate(null);
+    } else {
+      // Enter period logging mode
+      setLoggingMode('period');
+      setPeriodStartDate(null);
+    }
   };
 
   const handleCloseModal = () => {
@@ -86,6 +169,35 @@ export const CalendarView: React.FC = () => {
           textMonthFontSize: 18,
         }}
       />
+
+      {/* Log Period Button */}
+      <View className="px-6 py-4 border-t border-gray-200">
+        <TouchableOpacity
+          onPress={handleTogglePeriodLogging}
+          className={`py-3 px-6 rounded-lg ${
+            loggingMode === 'period' ? 'bg-red-600' : 'bg-red-500'
+          }`}
+          activeOpacity={0.8}
+        >
+          <Text className="text-white text-center font-semibold text-base">
+            {loggingMode === 'period'
+              ? periodStartDate
+                ? `Cancel (Start: ${periodStartDate})`
+                : 'Cancel Period Logging'
+              : 'Log Period'}
+          </Text>
+        </TouchableOpacity>
+
+        {loggingMode === 'period' && (
+          <View className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
+            <Text className="text-red-800 text-sm text-center">
+              {periodStartDate
+                ? `Start date selected: ${periodStartDate}\n\nTap the end date on the calendar`
+                : 'Tap today to mark it, or tap a past date to select start date'}
+            </Text>
+          </View>
+        )}
+      </View>
 
       {/* Legend */}
       <View className="px-6 py-4 border-t border-gray-200 mt-4">
