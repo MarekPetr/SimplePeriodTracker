@@ -46,8 +46,8 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
       setIsLoading(true);
       const noteData = await notesApi.getNoteByDate(date);
       setNote(noteData);
-      setNoteText(noteData?.content || '');
-      setSelectedEmojis(noteData?.emojis || []);
+      setNoteText(noteData?.text || '');
+      setSelectedEmojis(noteData?.emoji_notes.map(en => en.emoji) || []);
     } catch (error) {
       console.error('Error loading note:', error);
     } finally {
@@ -59,16 +59,21 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
     try {
       setIsSaving(true);
 
+      const emoji_notes = selectedEmojis.map(emoji => ({
+        emoji,
+        description: '', // You can add descriptions later if needed
+      }));
+
       const noteData = {
         date,
-        content: noteText,
-        emojis: selectedEmojis,
+        text: noteText,
+        emoji_notes,
       };
 
       if (note) {
         await notesApi.updateNote(date, {
-          content: noteText,
-          emojis: selectedEmojis,
+          text: noteText,
+          emoji_notes,
         });
       } else {
         await notesApi.createNote(noteData);

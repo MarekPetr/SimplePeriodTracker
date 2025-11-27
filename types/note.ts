@@ -1,22 +1,27 @@
+export interface EmojiNote {
+  emoji: string
+  description: string
+}
+
 export interface Note {
   id: string;
   user_id: string;
   date: string;
-  content: string;
-  emojis?: string[]; // Array of emoji characters
+  text: string | null;
+  emoji_notes: EmojiNote[];
   created_at: string;
   updated_at: string;
 }
 
 export interface CreateNoteRequest {
   date: string;
-  content: string;
-  emojis?: string[];
+  text?: string;
+  emoji_notes?: EmojiNote[];
 }
 
 export interface UpdateNoteRequest {
-  content?: string;
-  emojis?: string[];
+  text?: string;
+  emoji_notes?: EmojiNote[];
 }
 
 // Common predefined emojis for quick access

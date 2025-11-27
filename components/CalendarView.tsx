@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { calendarApi } from '@/api/calendar';
+import { cyclesApi } from '@/api/cycles';
 import { DayInfo } from '@/types/cycle';
 import { DayDetailModal } from '@/components/DayDetailModal';
 import { CalendarDay } from '@/components/CalendarDay';
@@ -24,7 +25,6 @@ export const CalendarView: React.FC = () => {
     try {
       setIsLoading(true);
       const data = await calendarApi.getMonthData(year, month);
-
       // Convert array to object keyed by date for easier lookup
       const dataMap: Record<string, DayInfo> = {};
       data.forEach((dayInfo) => {
@@ -56,39 +56,6 @@ export const CalendarView: React.FC = () => {
     // Reload month data to update hasNote indicators
     loadMonthData(currentMonth.year, currentMonth.month);
   };
-
-  // Build marked dates object for react-native-calendars
-  const markedDates = Object.keys(monthData).reduce((acc, dateString) => {
-    const dayInfo = monthData[dateString];
-    let color = '';
-
-    if (dayInfo.type === 'period') {
-      color = '#ef4444'; // Red
-    } else if (dayInfo.type === 'ovulation') {
-      color = '#22c55e'; // Green
-    } else if (dayInfo.type === 'fertile') {
-      color = '#86efac'; // Light green
-    }
-
-    acc[dateString] = {
-      selected: dateString === selectedDate,
-      selectedColor: '#ec4899', // Pink for selected
-      marked: dayInfo.hasNote || false,
-      dotColor: '#d4a574', // Beige for note indicator
-      ...(color && { customStyles: {
-        container: {
-          backgroundColor: color,
-          borderRadius: 16,
-        },
-        text: {
-          color: 'white',
-          fontWeight: 'bold',
-        },
-      }}),
-    };
-
-    return acc;
-  }, {} as any);
 
   if (isLoading) {
     return (
