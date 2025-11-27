@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
-import { useI18n } from '../../i18n/provider';
+import { useI18n } from '@/i18n/provider';
 
 interface RegisterScreenProps {
   navigation: any;

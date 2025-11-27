@@ -6,6 +6,8 @@ import { cyclesApi } from '@/api/cycles';
 import { DayInfo } from '@/types/cycle';
 import { DayDetailModal } from '@/components/DayDetailModal';
 import { CalendarDay } from '@/components/CalendarDay';
+import { useI18n } from '@/i18n/provider';
+import '@/config/calendarLocale';
 
 type LoggingMode = 'add-period' | 'edit-period' | null;
 
@@ -18,8 +20,9 @@ export const CalendarView: React.FC = () => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() + 1 };
   });
-  const [loggingMode, setLoggingMode] = useState<LoggingMode>(null);
+  const [editMode, setLoggingMode] = useState<LoggingMode>(null);
   const [periodStartDate, setPeriodStartDate] = useState<string | null>(null);
+  const { t } = useI18n();
 
   useEffect(() => {
     loadMonthData(currentMonth.year, currentMonth.month);
@@ -48,28 +51,23 @@ export const CalendarView: React.FC = () => {
   };
 
   const handleDayPress = (date: DateData) => {
-    // If in logging mode, handle period logging
-    if (loggingMode === 'add-period') {
+    if (editMode === 'add-period') {
       handlePeriodLogging(date.dateString);
       return;
     }
 
-    // If in edit mode, handle period editing
-    if (loggingMode === 'edit-period') {
+    if (editMode === 'edit-period') {
       handlePeriodEditing(date.dateString);
       return;
     }
 
-    // Normal mode: open note modal
     setSelectedDate(date.dateString);
     setIsModalVisible(true);
   };
 
   const handlePeriodLogging = async (dateString: string) => {
-    const selectedDate = new Date(dateString);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    selectedDate.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(dateString).getDate();
+    const today = new Date().getDate();
 
     // Only allow today or past dates
     if (selectedDate > today) {
@@ -77,7 +75,7 @@ export const CalendarView: React.FC = () => {
     }
 
     // If clicking today, create/extend period immediately
-    if (selectedDate.getTime() === today.getTime()) {
+    if (selectedDate === today) {
       try {
         await cyclesApi.createCycle({
           start_date: dateString,
@@ -97,9 +95,7 @@ export const CalendarView: React.FC = () => {
       setPeriodStartDate(dateString);
     } else {
       // Second click: set end date and create period
-      const startDate = new Date(periodStartDate);
-      startDate.setHours(0, 0, 0, 0);
-
+      const startDate = new Date(periodStartDate).getDate();
       if (selectedDate < startDate) {
         return;
       }
@@ -149,9 +145,9 @@ export const CalendarView: React.FC = () => {
       const startDate = new Date(startDateStr);
       const endDate = new Date(endDateStr);
 
-      const isFirstDay = clickedDate.getTime() === startDate.getTime();
-      const isLastDay = clickedDate.getTime() === endDate.getTime();
-      const isSingleDay = startDate.getTime() === endDate.getTime();
+      const isFirstDay = clickedDate.getDate() === startDate.getDate();
+      const isLastDay = clickedDate.getDate() === endDate.getDate();
+      const isSingleDay = startDate.getDate() === endDate.getDate();
 
       if (isSingleDay) {
         await cyclesApi.deleteCycle(period.id);
@@ -185,7 +181,7 @@ export const CalendarView: React.FC = () => {
   };
 
   const handleTogglePeriodLogging = () => {
-    if (loggingMode === 'add-period') {
+    if (editMode === 'add-period') {
       // Cancel logging mode
       setLoggingMode(null);
       setPeriodStartDate(null);
@@ -197,7 +193,7 @@ export const CalendarView: React.FC = () => {
   };
 
   const handleTogglePeriodEditing = () => {
-    if (loggingMode === 'edit-period') {
+    if (editMode === 'edit-period') {
       // Cancel edit mode
       setLoggingMode(null);
     } else {
@@ -236,7 +232,7 @@ export const CalendarView: React.FC = () => {
             state={state}
             dayInfo={date ? monthData[date.dateString] : undefined}
             onPress={() => date && handleDayPress(date)}
-            isLoggingPeriodStart={loggingMode === 'add-period' && date?.dateString === periodStartDate}
+            isLoggingPeriodStart={editMode === 'add-period' && date?.dateString === periodStartDate}
           />
         )}
         theme={{
@@ -247,37 +243,64 @@ export const CalendarView: React.FC = () => {
         }}
       />
 
+      {/* Legend */}
+      <View className="px-6 py-4 mt-2">
+        <View className="flex-row flex-wrap gap-4 justify-center">
+          <View className="flex-row items-center">
+            <View className="w-4 h-4 bg-red-500 rounded mr-2" />
+            <Text className="text-sm text-gray-600">{ t('calendar.period') }</Text>
+          </View>
+          <View className="flex-row items-center">
+            <View className="w-4 h-4 bg-green-500 rounded mr-2" />
+            <Text className="text-sm text-gray-600">{ t('calendar.ovulation') }</Text>
+          </View>
+          <View className="flex-row items-center">
+            <View className="w-4 h-4 bg-green-300 rounded mr-2" />
+            <Text className="text-sm text-gray-600">{ t('calendar.fertile') }</Text>
+          </View>
+          <View className="flex-row items-center">
+            <View className="w-3 h-3 bg-amber-700 rounded-full mr-2" />
+            <Text className="text-sm text-gray-600">{ t('calendar.hasNote') }</Text>
+          </View>
+        </View>
+      </View>
+
       {/* Log Period and Edit Period Buttons */}
-      <View className="px-6 py-4 border-t border-gray-200">
+      <View className="px-6 py-4">
+        <View className="">
+          <Text className="text-xl font-bold border-b mb-2 border-gray-200 text-red-600">
+            { t('calendar.period') }
+          </Text>
+        </View>
         <View className="flex-row gap-3">
           <TouchableOpacity
             onPress={handleTogglePeriodLogging}
             className={`flex-1 py-3 px-6 rounded-lg ${
-              loggingMode === 'add-period' ? 'bg-red-600' : 'bg-red-500'
+              editMode === 'add-period' ? 'bg-red-600' : 'bg-red-500'
             }`}
             activeOpacity={0.8}
           >
             <Text className="text-white text-center font-semibold text-base">
-              {loggingMode === 'add-period' ? 'Cancel' : 'Add Period'}
+              {editMode === 'add-period' ? 'Cancel' : t('calendar.addPeriod')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleTogglePeriodEditing}
             className={`flex-1 py-3 px-6 rounded-lg ${
-              loggingMode === 'edit-period' ? 'bg-orange-600' : 'bg-orange-500'
+              editMode === 'edit-period' ? 'bg-orange-600' : 'bg-orange-500'
             }`}
             activeOpacity={0.8}
           >
             <Text className="text-white text-center font-semibold text-base">
-              {loggingMode === 'edit-period' ? 'Cancel' : 'Edit Period'}
+              {editMode === 'edit-period' ? 'Cancel' : t('calendar.removePeriod')}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {loggingMode === 'add-period' && (
+        {editMode === 'add-period' && (
           <View className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
-            <Text className="text-red-800 text-sm text-center">
+            <Text className="text-blood-800 text-sm text-center">
               {periodStartDate
                 ? `Start date selected: ${periodStartDate}\n\nTap the end date on the calendar`
                 : 'Tap today to mark it, or tap a past date to select start date'}
@@ -285,39 +308,16 @@ export const CalendarView: React.FC = () => {
           </View>
         )}
 
-        {loggingMode === 'edit-period' && (
+        {editMode === 'edit-period' && (
           <View className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
             <Text className="text-orange-800 text-sm text-center">
               Tap a period day to edit:{'\n'}
               First day - removes first day{'\n'}
-              Last day - removes last day{'\n'}
-              Middle day - removes entire period
+              Middle day - removes entire period{'\n'}
+              Last day - removes last day
             </Text>
           </View>
         )}
-      </View>
-
-      {/* Legend */}
-      <View className="px-6 py-4 border-t border-gray-200 mt-4">
-        <Text className="text-sm font-semibold text-gray-700 mb-3">Legend:</Text>
-        <View className="flex-row flex-wrap gap-4">
-          <View className="flex-row items-center">
-            <View className="w-4 h-4 bg-red-500 rounded mr-2" />
-            <Text className="text-sm text-gray-600">Period</Text>
-          </View>
-          <View className="flex-row items-center">
-            <View className="w-4 h-4 bg-green-500 rounded mr-2" />
-            <Text className="text-sm text-gray-600">Ovulation</Text>
-          </View>
-          <View className="flex-row items-center">
-            <View className="w-4 h-4 bg-green-300 rounded mr-2" />
-            <Text className="text-sm text-gray-600">Fertile</Text>
-          </View>
-          <View className="flex-row items-center">
-            <View className="w-3 h-3 bg-amber-700 rounded-full mr-2" />
-            <Text className="text-sm text-gray-600">Has Note</Text>
-          </View>
-        </View>
       </View>
 
       <DayDetailModal

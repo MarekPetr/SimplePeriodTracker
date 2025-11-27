@@ -32,7 +32,10 @@
     "ovulation": "Ovulation",
     "fertile": "Fertile Window",
     "predicted": "Predicted",
-    "addNote": "Add Note"
+    "addNote": "Add Note",
+    "hasNote": "Note",
+    "addPeriod": "Add",
+    "removePeriod": "Remove"
   },
   "notes": {
     "title": "Notes",
@@ -73,13 +76,6 @@
     "confirm": "Confirm",
     "loading": "Loading...",
     "error": "An error occurred",
-    "success": "Success",
-    "monday": "Mo",
-    "tuesday": "Tu",
-    "wednesday": "We",
-    "thursday": "Th",
-    "friday": "Fr",
-    "saturday": "Sa",
-    "sunday": "Su"
+    "success": "Success"
   }
 }

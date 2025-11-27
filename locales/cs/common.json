@@ -32,7 +32,10 @@
     "ovulation": "Ovulace",
     "fertile": "Plodné období",
     "predicted": "Předpověď",
-    "addNote": "Přidat poznámku"
+    "addNote": "Přidat poznámku",
+    "hasNote": "Poznámka",
+    "addPeriod": "Přidat",
+    "removePeriod": "Odebrat"
   },
   "notes": {
     "title": "Poznámky",
@@ -73,13 +76,6 @@
     "confirm": "Potvrdit",
     "loading": "Načítání...",
     "error": "Došlo k chybě",
-    "success": "Úspěch",
-    "monday": "Po",
-    "tuesday": "Út",
-    "wednesday": "St",
-    "thursday": "Čt",
-    "friday": "Pá",
-    "saturday": "So",
-    "sunday": "Ne"
+    "success": "Úspěch"
   }
 }

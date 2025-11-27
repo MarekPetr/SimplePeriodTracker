@@ -36,24 +36,24 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
+      const loadNote = async () => {
+      try {
+        setIsLoading(true);
+        const noteData = await notesApi.getNoteByDate(date);
+        setNote(noteData);
+        setNoteText(noteData?.text || '');
+        setSelectedEmojis(noteData?.emoji_notes.map(en => en.emoji) || []);
+      } catch (error) {
+        console.error('Error loading note:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (visible && date) {
       loadNote();
     }
   }, [visible, date]);
-
-  const loadNote = async () => {
-    try {
-      setIsLoading(true);
-      const noteData = await notesApi.getNoteByDate(date);
-      setNote(noteData);
-      setNoteText(noteData?.text || '');
-      setSelectedEmojis(noteData?.emoji_notes.map(en => en.emoji) || []);
-    } catch (error) {
-      console.error('Error loading note:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSaveNote = async () => {
     try {

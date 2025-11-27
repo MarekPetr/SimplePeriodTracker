@@ -10,8 +10,8 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
-import { useI18n } from '../../i18n/provider';
+import { useAuth } from '@/context/AuthContext';
+import { useI18n } from '@/i18n/provider';
 
 interface LoginScreenProps {
   navigation: any;
