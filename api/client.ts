@@ -14,6 +14,7 @@ class ApiClient {
   private isRefreshing = false;
   private refreshSubscribers: ((token: string) => void)[] = [];
   private refreshTimer: NodeJS.Timeout | null = null;
+  private refreshPromise: Promise<void> | null = null;
 
   constructor() {
     this.axios = axios.create({
@@ -195,16 +196,29 @@ class ApiClient {
   }
 
   private async refreshTokensSilently() {
-    if (this.isRefreshing) {
-      return;
+    // If already refreshing, wait for that refresh to complete
+    if (this.refreshPromise) {
+      console.log('Token refresh already in progress, waiting...');
+      return this.refreshPromise;
     }
 
+    // Create new refresh promise
+    this.refreshPromise = this.doRefresh();
+
+    try {
+      await this.refreshPromise;
+    } finally {
+      this.refreshPromise = null;
+    }
+  }
+
+  private async doRefresh() {
     const refreshToken = await this.getRefreshToken();
     if (!refreshToken) {
+      console.log('No refresh token available for background refresh');
       return;
     }
 
-    this.isRefreshing = true;
     try {
       console.log('Background token refresh...');
       const response = await this.axios.post('/auth/refresh', { refresh_token: refreshToken });
@@ -217,8 +231,6 @@ class ApiClient {
     } catch (error) {
       console.error('Background token refresh failed:', error);
       // Don't clear tokens on silent refresh failure - let the 401 interceptor handle it
-    } finally {
-      this.isRefreshing = false;
     }
   }
 }
