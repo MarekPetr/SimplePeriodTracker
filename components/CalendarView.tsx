@@ -8,6 +8,7 @@ import { DayDetailModal } from '@/components/DayDetailModal';
 import { CalendarDay } from '@/components/CalendarDay';
 import { useI18n } from '@/i18n/provider';
 import '@/config/calendarLocale';
+import { CalendarColors } from '@/constants/colors';
 
 type LoggingMode = 'add-period' | 'edit-period' | null;
 
@@ -245,19 +246,19 @@ export const CalendarView: React.FC = () => {
       <View className="mt-2 px-6 py-4">
         <View className="flex-row flex-wrap justify-center gap-4">
           <View className="flex-row items-center">
-            <View className="mr-2 h-4 w-4 rounded bg-red-500" />
+            <View className={`mr-2 h-4 w-4 rounded ${CalendarColors.period}`} />
             <Text className="text-sm text-gray-600">{t('calendar.period')}</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="mr-2 h-4 w-4 rounded bg-green-500" />
+            <View className={`mr-2 h-4 w-4 rounded ${CalendarColors.ovulation}`} />
             <Text className="text-sm text-gray-600">{t('calendar.ovulation')}</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="mr-2 h-4 w-4 rounded bg-green-300" />
+            <View className={`mr-2 h-4 w-4 rounded ${CalendarColors.fertile}`} />
             <Text className="text-sm text-gray-600">{t('calendar.fertile')}</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="mr-2 h-3 w-3 rounded-full bg-gray-600" />
+            <View className={`mr-2 h-3 w-3 rounded-full ${CalendarColors.note}`} />
             <Text className="text-sm text-gray-600">{t('calendar.hasNote')}</Text>
           </View>
         </View>

@@ -21,7 +21,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
   onClose,
   onNoteUpdated,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [note, setNote] = useState<Note | null>(null);
   const [noteText, setNoteText] = useState('');
   const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
@@ -133,7 +133,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
           {/* Header */}
           <View className="flex-row items-center justify-between border-b border-gray-200 px-6 py-4">
             <Text className="text-xl font-bold text-gray-900">
-              {new Date(date).toLocaleDateString('en-US', {
+              {new Date(date).toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',

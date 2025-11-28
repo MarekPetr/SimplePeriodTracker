@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { DayInfo } from '@/types/cycle';
+import { CalendarColors } from '@/constants/colors';
 
 interface CalendarDayProps {
   date?: { dateString: string; day: number; month: number; year: number };
@@ -31,16 +32,16 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
 
   // Show lighter red for period start selection
   if (isLoggingPeriodStart) {
-    bgColor = 'bg-red-300';
+    bgColor = CalendarColors.periodSelecting;
     textColor = 'text-gray-900';
   } else if (dayInfo?.type === 'period') {
-    bgColor = 'bg-red-500';
+    bgColor = CalendarColors.period;
     textColor = 'text-white';
   } else if (dayInfo?.type === 'ovulation') {
-    bgColor = 'bg-green-500';
+    bgColor = CalendarColors.ovulation;
     textColor = 'text-white';
   } else if (dayInfo?.type === 'fertile') {
-    bgColor = 'bg-green-300';
+    bgColor = CalendarColors.fertile;
     textColor = 'text-gray-900';
   }
 
@@ -56,12 +57,12 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
       className="items-center justify-center">
       <View
         className={`h-10 w-10 items-center justify-center rounded-full ${bgColor} ${
-          isToday && bgColor === 'bg-transparent' ? 'border-2 border-pink-500' : ''
+          isToday && bgColor === 'bg-transparent' ? `border-2 ${CalendarColors.today}` : ''
         }`}>
         <Text className={`font-semibold ${textColor}`}>{date.day}</Text>
         {dayInfo?.hasNote && (
           <View className="absolute bottom-0.5">
-            <View className="h-1.5 w-1.5 rounded-full bg-gray-600" />
+            <View className={`h-1.5 w-1.5 rounded-full ${CalendarColors.note}`} />
           </View>
         )}
       </View>
