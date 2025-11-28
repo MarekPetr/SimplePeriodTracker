@@ -20,8 +20,8 @@ export const AppNavigator: React.FC = () => {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#ec4899" />
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#a91524" />
       </View>
     );
   }
@@ -31,8 +31,7 @@ export const AppNavigator: React.FC = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-        }}
-      >
+        }}>
         {user ? (
           <Stack.Screen name="Home" component={HomeScreen} />
         ) : (

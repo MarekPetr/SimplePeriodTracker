@@ -19,7 +19,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
   isLoggingPeriodStart,
 }) => {
   if (!date) {
-    return <View className="w-10 h-10" />;
+    return <View className="h-10 w-10" />;
   }
 
   const isDisabled = state === 'disabled';
@@ -53,17 +53,15 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
     <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      className="items-center justify-center"
-    >
+      className="items-center justify-center">
       <View
-        className={`w-10 h-10 rounded-full items-center justify-center ${bgColor} ${
+        className={`h-10 w-10 items-center justify-center rounded-full ${bgColor} ${
           isToday && bgColor === 'bg-transparent' ? 'border-2 border-pink-500' : ''
-        }`}
-      >
+        }`}>
         <Text className={`font-semibold ${textColor}`}>{date.day}</Text>
         {dayInfo?.hasNote && (
           <View className="absolute bottom-0.5">
-            <View className="w-1.5 h-1.5 rounded-full bg-gray-600" />
+            <View className="h-1.5 w-1.5 rounded-full bg-gray-600" />
           </View>
         )}
       </View>

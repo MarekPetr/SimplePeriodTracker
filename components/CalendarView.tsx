@@ -213,7 +213,7 @@ export const CalendarView: React.FC = () => {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#ec4899" />
+        <ActivityIndicator size="large" color="#a91524" />
       </View>
     );
   }
@@ -234,7 +234,7 @@ export const CalendarView: React.FC = () => {
           />
         )}
         theme={{
-          arrowColor: '#ec4899',
+          arrowColor: '#a91524',
           monthTextColor: '#1f2937',
           textMonthFontWeight: 'bold',
           textMonthFontSize: 18,

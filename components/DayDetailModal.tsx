@@ -152,7 +152,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
             viewIsInsideTabBar={false}
             keyboardShouldPersistTaps="handled">
             {isLoading ? (
-              <ActivityIndicator size="large" color="#ec4899" />
+              <ActivityIndicator size="large" color="#a91524" />
             ) : (
               <>
                 {/* Day Type Badge */}
