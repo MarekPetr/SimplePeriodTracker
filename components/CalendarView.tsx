@@ -134,7 +134,6 @@ export const CalendarView: React.FC = () => {
 
       if (!period) {
         // No period found for this date
-        console.log('No period found for this date');
         return;
       }
 
@@ -169,7 +168,6 @@ export const CalendarView: React.FC = () => {
           end_date: newEndDateStr,
         });
       } else {
-        console.log('Deleting entire period (middle day clicked)');
         await cyclesApi.deleteCycle(period.id);
       }
 
