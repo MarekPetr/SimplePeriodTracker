@@ -68,5 +68,16 @@
     "loading": "Načítání...",
     "error": "Došlo k chybě",
     "success": "Úspěch"
+  },
+  "hints": {
+    "startDateSelected": "Začátek přidán",
+    "tapEndDate": "Klikněte na datum konce v kalendáři",
+    "tapOneDay": "Klikněte na dnešní datum pro přidání dneška nebo datum v minulosti pro zaznamenání periody v minulosti",
+    "edit": {
+      "tapPeriodDay": "Klikněte den menstruace k úpravě:",
+      "firstDay": "První den - odstraní první den",
+      "middleDay": "Prostřední den - odstraní celou periodu",
+      "lastDay": "Poslední den - odstraní poslední den"
+    }
   }
 }

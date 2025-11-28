@@ -214,7 +214,7 @@ export const CalendarView: React.FC = () => {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#ec4899" />
       </View>
     );
@@ -244,23 +244,23 @@ export const CalendarView: React.FC = () => {
       />
 
       {/* Legend */}
-      <View className="px-6 py-4 mt-2">
-        <View className="flex-row flex-wrap gap-4 justify-center">
+      <View className="mt-2 px-6 py-4">
+        <View className="flex-row flex-wrap justify-center gap-4">
           <View className="flex-row items-center">
-            <View className="w-4 h-4 bg-red-500 rounded mr-2" />
-            <Text className="text-sm text-gray-600">{ t('calendar.period') }</Text>
+            <View className="mr-2 h-4 w-4 rounded bg-red-500" />
+            <Text className="text-sm text-gray-600">{t('calendar.period')}</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="w-4 h-4 bg-green-500 rounded mr-2" />
-            <Text className="text-sm text-gray-600">{ t('calendar.ovulation') }</Text>
+            <View className="mr-2 h-4 w-4 rounded bg-green-500" />
+            <Text className="text-sm text-gray-600">{t('calendar.ovulation')}</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="w-4 h-4 bg-green-300 rounded mr-2" />
-            <Text className="text-sm text-gray-600">{ t('calendar.fertile') }</Text>
+            <View className="mr-2 h-4 w-4 rounded bg-green-300" />
+            <Text className="text-sm text-gray-600">{t('calendar.fertile')}</Text>
           </View>
           <View className="flex-row items-center">
-            <View className="w-3 h-3 bg-gray-600 rounded-full mr-2" />
-            <Text className="text-sm text-gray-600">{ t('calendar.hasNote') }</Text>
+            <View className="mr-2 h-3 w-3 rounded-full bg-gray-600" />
+            <Text className="text-sm text-gray-600">{t('calendar.hasNote')}</Text>
           </View>
         </View>
       </View>
@@ -268,53 +268,54 @@ export const CalendarView: React.FC = () => {
       {/* Log Period and Edit Period Buttons */}
       <View className="px-6 py-4">
         <View className="">
-          <Text className="text-xl font-bold border-b mb-2 border-gray-200 text-red-600">
-            { t('calendar.period') }
+          <Text className="mb-2 border-b border-gray-200 text-xl font-bold text-red-600">
+            {t('calendar.period')}
           </Text>
         </View>
         <View className="flex-row gap-3">
           <TouchableOpacity
             onPress={handleTogglePeriodLogging}
-            className={`flex-1 py-3 px-6 rounded-lg ${
+            className={`flex-1 rounded-lg px-6 py-3 ${
               editMode === 'add-period' ? 'bg-red-600' : 'bg-red-500'
             }`}
-            activeOpacity={0.8}
-          >
-            <Text className="text-white text-center font-semibold text-base">
+            activeOpacity={0.8}>
+            <Text className="text-center text-base font-semibold text-white">
               {editMode === 'add-period' ? t('common.cancel') : t('calendar.addPeriod')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={handleTogglePeriodEditing}
-            className={`flex-1 py-3 px-6 rounded-lg ${
+            className={`flex-1 rounded-lg px-6 py-3 ${
               editMode === 'edit-period' ? 'bg-orange-400' : 'bg-orange-400'
             }`}
-            activeOpacity={0.8}
-          >
-            <Text className="text-white text-center font-semibold text-base">
+            activeOpacity={0.8}>
+            <Text className="text-center text-base font-semibold text-white">
               {editMode === 'edit-period' ? t('common.cancel') : t('calendar.removePeriod')}
             </Text>
           </TouchableOpacity>
         </View>
 
         {editMode === 'add-period' && (
-          <View className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
-            <Text className="text-blood-800 text-sm text-center">
+          <View className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
+            <Text className="text-blood-800 text-center text-sm">
               {periodStartDate
-                ? `Start date selected: ${periodStartDate}\n\nTap the end date on the calendar`
-                : 'Tap today to mark it, or tap a past date to select start date'}
+                ? `${t('hints.startDateSelected')}: ${periodStartDate}\n${t('hints.tapEndDate')}`
+                : t('hints.tapOneDay')}
             </Text>
           </View>
         )}
 
         {editMode === 'edit-period' && (
-          <View className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-            <Text className="text-orange-800 text-sm text-center">
-              Tap a period day to edit:{'\n'}
-              First day - removes first day{'\n'}
-              Middle day - removes entire period{'\n'}
-              Last day - removes last day
+          <View className="mt-3 rounded-lg border border-orange-200 bg-orange-50 p-3">
+            <Text className="text-center text-sm text-orange-800">
+              {t('hints.edit.tapPeriodDay')}
+              {'\n'}
+              {t('hints.edit.firstDay')}
+              {'\n'}
+              {t('hints.edit.middleDay')}
+              {'\n'}
+              {t('hints.edit.lastDay')}
             </Text>
           </View>
         )}

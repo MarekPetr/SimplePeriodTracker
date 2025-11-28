@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DayInfo } from '@/types/cycle';
 import { Note, QUICK_ACCESS_EMOJIS } from '@/types/note';
@@ -36,13 +29,13 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-      const loadNote = async () => {
+    const loadNote = async () => {
       try {
         setIsLoading(true);
         const noteData = await notesApi.getNoteByDate(date);
         setNote(noteData);
         setNoteText(noteData?.text || '');
-        setSelectedEmojis(noteData?.emoji_notes.map(en => en.emoji) || []);
+        setSelectedEmojis(noteData?.emoji_notes.map((en) => en.emoji) || []);
       } catch (error) {
         console.error('Error loading note:', error);
       } finally {
@@ -59,7 +52,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
     try {
       setIsSaving(true);
 
-      const emoji_notes = selectedEmojis.map(emoji => ({
+      const emoji_notes = selectedEmojis.map((emoji) => ({
         emoji,
         description: '', // You can add descriptions later if needed
       }));
@@ -108,15 +101,15 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
   };
 
   const getDayTypeText = () => {
-    if (!dayInfo?.type) return 'Regular Day';
+    if (!dayInfo?.type) return '';
 
     const types: Record<string, string> = {
-      period: 'Period Day',
-      ovulation: 'Ovulation Day',
-      fertile: 'Fertile Window',
+      period: t('calendar.period'),
+      ovulation: t('calendar.ovulation'),
+      fertile: t('calendar.fertile'),
     };
 
-    return types[dayInfo.type] || 'Regular Day';
+    return types[dayInfo.type] || '';
   };
 
   const getDayTypeColor = () => {
@@ -131,17 +124,14 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
     return colors[dayInfo.type] || 'bg-gray-100 text-gray-700';
   };
 
+  const dayType = getDayTypeText();
+
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-3xl">
+        <View className="rounded-t-3xl bg-white">
           {/* Header */}
-          <View className="flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
+          <View className="flex-row items-center justify-between border-b border-gray-200 px-6 py-4">
             <Text className="text-xl font-bold text-gray-900">
               {new Date(date).toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -150,7 +140,7 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
               })}
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Text className="text-gray-500 text-2xl">×</Text>
+              <Text className="text-2xl text-gray-500">×</Text>
             </TouchableOpacity>
           </View>
 
@@ -160,47 +150,46 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
             enableAutomaticScroll={true}
             extraScrollHeight={260}
             viewIsInsideTabBar={false}
-            keyboardShouldPersistTaps="handled"
-          >
+            keyboardShouldPersistTaps="handled">
             {isLoading ? (
               <ActivityIndicator size="large" color="#ec4899" />
             ) : (
               <>
                 {/* Day Type Badge */}
-                <View className={`self-start px-4 py-2 rounded-full mb-4 ${getDayTypeColor()}`}>
-                  <Text className="font-semibold">
-                    {getDayTypeText()}
-                    {dayInfo?.isPredicted && ' (Predicted)'}
-                  </Text>
-                </View>
+                {dayType && (
+                  <View className={`mb-4 self-start rounded-full px-4 py-2 ${getDayTypeColor()}`}>
+                    <Text className="font-semibold">
+                      {getDayTypeText()}
+                      {dayInfo?.isPredicted && ` (${t('calendar.predicted')})`}
+                    </Text>
+                  </View>
+                )}
 
                 {/* Quick Emoji Selection */}
-                <Text className="text-sm font-semibold text-gray-700 mb-2">
-                  { t('dayDetail.emojiNote')}
+                <Text className="mb-2 text-sm font-semibold text-gray-700">
+                  {t('dayDetail.emojiNote')}
                 </Text>
-                <View className="flex-row flex-wrap gap-2 mb-4">
+                <View className="mb-4 flex-row flex-wrap gap-2">
                   {QUICK_ACCESS_EMOJIS.map((emoji) => (
                     <TouchableOpacity
                       key={emoji}
                       onPress={() => toggleEmoji(emoji)}
-                      className={`p-3 rounded-lg border-2 ${
+                      className={`rounded-lg border-2 p-3 ${
                         selectedEmojis.includes(emoji)
                           ? 'border-red-500 bg-red-50'
                           : 'border-gray-300 bg-white'
-                      }`}
-                    >
+                      }`}>
                       <Text className="text-2xl">{emoji}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
 
                 {/* Note Text Input */}
-                <Text className="text-sm font-semibold text-gray-700 mb-2">
-                  { t('dayDetail.note')}
+                <Text className="mb-2 text-sm font-semibold text-gray-700">
+                  {t('dayDetail.note')}
                 </Text>
                 <TextInput
-                  className="border border-gray-300 rounded-lg px-4 py-3 text-base text-gray-900 mb-4"
-                  placeholder="Add a note for this day..."
+                  className="mb-4 rounded-lg border border-gray-300 px-4 py-3 text-base text-gray-900"
                   value={noteText}
                   onChangeText={setNoteText}
                   multiline
@@ -213,15 +202,12 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                   <TouchableOpacity
                     onPress={handleSaveNote}
                     disabled={isSaving}
-                    className={`flex-1 bg-red-600 rounded-lg py-4 ${
-                      isSaving ? 'opacity-50' : ''
-                    }`}
-                  >
+                    className={`flex-1 rounded-lg bg-red-600 py-4 ${isSaving ? 'opacity-50' : ''}`}>
                     {isSaving ? (
                       <ActivityIndicator color="white" />
                     ) : (
-                      <Text className="text-white text-center font-semibold">
-                        { t('common.save')}
+                      <Text className="text-center font-semibold text-white">
+                        {t('common.save')}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -230,12 +216,9 @@ export const DayDetailModal: React.FC<DayDetailModalProps> = ({
                     <TouchableOpacity
                       onPress={handleDeleteNote}
                       disabled={isSaving}
-                      className={`px-6 bg-red-500 rounded-lg py-4 ${
-                        isSaving ? 'opacity-50' : ''
-                      }`}
-                    >
-                      <Text className="text-white text-center font-semibold">
-                        { t('common.delete')}
+                      className={`rounded-lg bg-red-500 px-6 py-4 ${isSaving ? 'opacity-50' : ''}`}>
+                      <Text className="text-center font-semibold text-white">
+                        {t('common.delete')}
                       </Text>
                     </TouchableOpacity>
                   )}

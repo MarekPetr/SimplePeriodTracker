@@ -68,5 +68,16 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "success": "Success"
+  },
+  "hints": {
+    "startDateSelected": "Start date selected",
+    "tapEndDate": "Tap the end date on the calendar",
+    "tapOneDay": "Tap today to mark it, or tap a past date to select start date",
+    "edit": {
+      "tapPeriodDay": "Tap a period day to edit:",
+      "firstDay": "First day - removes first day",
+      "middleDay": "Middle day - removes entire period",
+      "lastDay": "Last day - removes last day"
+    }
   }
 }
