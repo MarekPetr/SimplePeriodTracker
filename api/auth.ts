@@ -23,9 +23,12 @@ export const authApi = {
       },
     });
 
-    // Save token after successful login
+    // Save tokens after successful login
     if (response.data.access_token) {
       await apiClient.saveToken(response.data.access_token);
+    }
+    if (response.data.refresh_token) {
+      await apiClient.saveRefreshToken(response.data.refresh_token);
     }
 
     return response.data;

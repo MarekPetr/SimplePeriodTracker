@@ -7,9 +7,12 @@ const API_URL = __DEV__
   : process.env.EXPO_PUBLIC_API_URL_PROD;
 
 const TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
 
 class ApiClient {
   public axios: AxiosInstance;
+  private isRefreshing = false;
+  private refreshSubscribers: ((token: string) => void)[] = [];
 
   constructor() {
     this.axios = axios.create({
@@ -41,10 +44,49 @@ class ApiClient {
     this.axios.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
-          // Token expired or invalid, clear it
-          await this.clearToken();
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          if (this.isRefreshing) {
+            // Wait for the refresh to complete
+            return new Promise((resolve) => {
+              this.refreshSubscribers.push((token: string) => {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+                resolve(this.axios(originalRequest));
+              });
+            });
+          }
+
+          originalRequest._retry = true;
+          this.isRefreshing = true;
+
+          try {
+            const refreshToken = await this.getRefreshToken();
+            if (!refreshToken) {
+              await this.clearTokens();
+              return Promise.reject(error);
+            }
+
+            const response = await this.axios.post('/auth/refresh', { refresh_token: refreshToken });
+            const { access_token, refresh_token: new_refresh_token } = response.data;
+
+            await this.saveToken(access_token);
+            await this.saveRefreshToken(new_refresh_token);
+
+            // Retry all queued requests
+            this.refreshSubscribers.forEach((callback) => callback(access_token));
+            this.refreshSubscribers = [];
+
+            originalRequest.headers.Authorization = `Bearer ${access_token}`;
+            return this.axios(originalRequest);
+          } catch (refreshError) {
+            await this.clearTokens();
+            return Promise.reject(refreshError);
+          } finally {
+            this.isRefreshing = false;
+          }
         }
+
         return Promise.reject(error);
       }
     );
@@ -75,15 +117,46 @@ class ApiClient {
     }
   }
 
+  async saveRefreshToken(token: string): Promise<void> {
+    try {
+      if (Platform.OS === 'web') {
+        localStorage.setItem(REFRESH_TOKEN_KEY, token);
+      } else {
+        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, token);
+      }
+    } catch (error) {
+      console.error('Error saving refresh token:', error);
+    }
+  }
+
+  async getRefreshToken(): Promise<string | null> {
+    try {
+      if (Platform.OS === 'web') {
+        return localStorage.getItem(REFRESH_TOKEN_KEY);
+      } else {
+        return await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+      }
+    } catch (error) {
+      console.error('Error getting refresh token:', error);
+      return null;
+    }
+  }
+
   async clearToken(): Promise<void> {
+    await this.clearTokens();
+  }
+
+  async clearTokens(): Promise<void> {
     try {
       if (Platform.OS === 'web') {
         localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
       } else {
         await SecureStore.deleteItemAsync(TOKEN_KEY);
+        await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
       }
     } catch (error) {
-      console.error('Error clearing token:', error);
+      console.error('Error clearing tokens:', error);
     }
   }
 }
