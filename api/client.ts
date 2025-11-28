@@ -13,6 +13,7 @@ class ApiClient {
   public axios: AxiosInstance;
   private isRefreshing = false;
   private refreshSubscribers: ((token: string) => void)[] = [];
+  private refreshTimer: NodeJS.Timeout | null = null;
 
   constructor() {
     this.axios = axios.create({
@@ -23,6 +24,7 @@ class ApiClient {
     });
 
     this.setupInterceptors();
+    this.startTokenRefreshTimer();
   }
 
   private setupInterceptors() {
@@ -62,14 +64,19 @@ class ApiClient {
 
           try {
             const refreshToken = await this.getRefreshToken();
+            console.log('Attempting token refresh, refresh token exists:', !!refreshToken);
+
             if (!refreshToken) {
+              console.log('No refresh token found, clearing tokens and logging out');
               await this.clearTokens();
               return Promise.reject(error);
             }
 
+            console.log('Calling refresh endpoint...');
             const response = await this.axios.post('/auth/refresh', { refresh_token: refreshToken });
             const { access_token, refresh_token: new_refresh_token } = response.data;
 
+            console.log('Token refresh successful, saving new tokens');
             await this.saveToken(access_token);
             await this.saveRefreshToken(new_refresh_token);
 
@@ -80,6 +87,7 @@ class ApiClient {
             originalRequest.headers.Authorization = `Bearer ${access_token}`;
             return this.axios(originalRequest);
           } catch (refreshError) {
+            console.error('Token refresh failed:', refreshError);
             await this.clearTokens();
             return Promise.reject(refreshError);
           } finally {
@@ -99,6 +107,7 @@ class ApiClient {
       } else {
         await SecureStore.setItemAsync(TOKEN_KEY, token);
       }
+      console.log('Access token saved successfully');
     } catch (error) {
       console.error('Error saving token:', error);
     }
@@ -124,6 +133,7 @@ class ApiClient {
       } else {
         await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, token);
       }
+      console.log('Refresh token saved successfully');
     } catch (error) {
       console.error('Error saving refresh token:', error);
     }
@@ -132,9 +142,13 @@ class ApiClient {
   async getRefreshToken(): Promise<string | null> {
     try {
       if (Platform.OS === 'web') {
-        return localStorage.getItem(REFRESH_TOKEN_KEY);
+        const token = localStorage.getItem(REFRESH_TOKEN_KEY);
+        console.log('Retrieved refresh token:', token ? 'exists' : 'null');
+        return token;
       } else {
-        return await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+        const token = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+        console.log('Retrieved refresh token:', token ? 'exists' : 'null');
+        return token;
       }
     } catch (error) {
       console.error('Error getting refresh token:', error);
@@ -155,8 +169,56 @@ class ApiClient {
         await SecureStore.deleteItemAsync(TOKEN_KEY);
         await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
       }
+      this.stopTokenRefreshTimer();
     } catch (error) {
       console.error('Error clearing tokens:', error);
+    }
+  }
+
+  public startTokenRefreshTimer() {
+    this.stopTokenRefreshTimer();
+
+    // Refresh token every minute
+    this.refreshTimer = setInterval(async () => {
+      await this.refreshTokensSilently();
+    }, 60000); // 60 seconds
+
+    console.log('Token refresh timer started (refreshing every 1 minute)');
+  }
+
+  private stopTokenRefreshTimer() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+      console.log('Token refresh timer stopped');
+    }
+  }
+
+  private async refreshTokensSilently() {
+    if (this.isRefreshing) {
+      return;
+    }
+
+    const refreshToken = await this.getRefreshToken();
+    if (!refreshToken) {
+      return;
+    }
+
+    this.isRefreshing = true;
+    try {
+      console.log('Background token refresh...');
+      const response = await this.axios.post('/auth/refresh', { refresh_token: refreshToken });
+      const { access_token, refresh_token: new_refresh_token } = response.data;
+
+      await this.saveToken(access_token);
+      await this.saveRefreshToken(new_refresh_token);
+
+      console.log('Background token refresh successful');
+    } catch (error) {
+      console.error('Background token refresh failed:', error);
+      // Don't clear tokens on silent refresh failure - let the 401 interceptor handle it
+    } finally {
+      this.isRefreshing = false;
     }
   }
 }

@@ -31,6 +31,9 @@ export const authApi = {
       await apiClient.saveRefreshToken(response.data.refresh_token);
     }
 
+    // Start background token refresh
+    apiClient.startTokenRefreshTimer();
+
     return response.data;
   },
 
