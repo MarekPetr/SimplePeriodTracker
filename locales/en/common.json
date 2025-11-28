@@ -37,16 +37,6 @@
     "addPeriod": "Add",
     "removePeriod": "Remove"
   },
-  "notes": {    
-    "title": "Notes",
-    "addNote": "Add Note",
-    "editNote": "Edit Note",
-    "deleteNote": "Delete Note",
-    "placeholder": "Write your note here...",
-    "quickEmojis": "Quick Add",
-    "save": "Save",
-    "cancel": "Cancel"
-  },
   "dayDetail": {
     "title": "Day Details",
     "type": "Type",

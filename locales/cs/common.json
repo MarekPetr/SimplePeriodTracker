@@ -37,16 +37,6 @@
     "addPeriod": "Přidat",
     "removePeriod": "Odebrat"
   },
-  "notes": {
-    "title": "Poznámky",
-    "addNote": "Přidat poznámku",
-    "editNote": "Upravit poznámku",
-    "deleteNote": "Smazat poznámku",
-    "placeholder": "Napište poznámku...",
-    "quickEmojis": "Rychlé přidání",
-    "save": "Uložit",
-    "cancel": "Zrušit"
-  },
   "dayDetail": {
     "title": "Detail dne",
     "type": "Typ",
