@@ -79,8 +79,8 @@ export const CalendarView: React.FC = () => {
     if (selectedDate === today) {
       try {
         await cyclesApi.createCycle({
-          start_date: dateString,
-          end_date: dateString,
+          period_start_date: dateString,
+          period_end_date: dateString,
         });
         setLoggingMode(null);
         loadMonthData(currentMonth.year, currentMonth.month);
@@ -103,8 +103,8 @@ export const CalendarView: React.FC = () => {
 
       try {
         await cyclesApi.createCycle({
-          start_date: periodStartDate,
-          end_date: dateString,
+          period_start_date: periodStartDate,
+          period_end_date: dateString,
         });
         setPeriodStartDate(null);
         setLoggingMode(null);
@@ -124,8 +124,8 @@ export const CalendarView: React.FC = () => {
       // Find the period that contains this date
       const period = periods.find((p) => {
         // Extract just the date part (YYYY-MM-DD) from datetime strings
-        const startDateStr = p.start_date.split('T')[0];
-        const endDateStr = p.end_date ? p.end_date.split('T')[0] : startDateStr;
+        const startDateStr = p.period_start_date.split('T')[0];
+        const endDateStr = p.period_end_date ? p.period_end_date.split('T')[0] : startDateStr;
 
         const startDate = new Date(startDateStr);
         const endDate = new Date(endDateStr);
@@ -139,8 +139,10 @@ export const CalendarView: React.FC = () => {
       }
 
       // Extract just the date part from datetime strings
-      const startDateStr = period.start_date.split('T')[0];
-      const endDateStr = period.end_date ? period.end_date.split('T')[0] : startDateStr;
+      const startDateStr = period.period_start_date.split('T')[0];
+      const endDateStr = period.period_end_date
+        ? period.period_end_date.split('T')[0]
+        : startDateStr;
 
       const startDate = new Date(startDateStr);
       const endDate = new Date(endDateStr);
@@ -156,8 +158,8 @@ export const CalendarView: React.FC = () => {
         newStartDate.setDate(newStartDate.getDate() + 1);
         const newStartDateStr = newStartDate.toISOString().split('T')[0];
         await cyclesApi.updateCycle(period.id, {
-          start_date: newStartDateStr,
-          end_date: endDateStr,
+          period_start_date: newStartDateStr,
+          period_end_date: endDateStr,
         });
       } else if (isLastDay) {
         const newEndDate = new Date(endDate);
@@ -165,8 +167,8 @@ export const CalendarView: React.FC = () => {
         const newEndDateStr = newEndDate.toISOString().split('T')[0];
 
         await cyclesApi.updateCycle(period.id, {
-          start_date: startDateStr,
-          end_date: newEndDateStr,
+          period_start_date: startDateStr,
+          period_end_date: newEndDateStr,
         });
       } else {
         await cyclesApi.deleteCycle(period.id);

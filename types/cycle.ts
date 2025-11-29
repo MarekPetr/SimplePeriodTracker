@@ -1,8 +1,8 @@
 export interface Cycle {
   id: string;
   user_id: string;
-  start_date: string;
-  end_date?: string;
+  period_start_date: string;
+  period_end_date?: string;
   cycle_length?: number;
   period_length?: number;
   is_predicted: boolean;
@@ -10,8 +10,8 @@ export interface Cycle {
 }
 
 export interface CreateCycleRequest {
-  start_date: string;
-  end_date?: string;
+  period_start_date: string;
+  period_end_date?: string;
 }
 
 export interface DayInfo {
